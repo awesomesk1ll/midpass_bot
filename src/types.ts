@@ -1,3 +1,4 @@
+// Запись из раздела Лист ожидания
 export interface WaitingAppointment {
   WaitingAppointmentId: string,
   PlaceInQueue: number,
@@ -17,6 +18,7 @@ export interface WaitingAppointment {
   Payload: string
 }
 
+// Раздел Лист ожидания
 export interface WaitingAppointments {
   Items: WaitingAppointment[],
   Count: number
@@ -48,4 +50,36 @@ export interface MonthScheduleResponse {
   TotalSlots: number,
   AvailableSlots: number,
   ReserevedByYouCount: number,
+}
+
+// Запись из раздела Записи
+export interface SheduledAppointment {
+  ApplicantId: string,
+  CanCancel: boolean,
+  CanConfirm: boolean,
+  Email: string,
+  FullName: string,
+  Id: string,
+  Payload: string
+  PhoneNumber: string,
+  AppointmentDateTimeString: string,
+  ServiceAlternativeName: string,
+  ServiceId: string,
+  ServiceName: string,
+  ServiceProviderCode: string,
+  WaitingAppointmentId: string,
+  StatusChangeDateTimeString: string,
+  Status: number,
+  WindowNumber: number,
+}
+
+// Раздел записи
+export interface FindAppointmentsResponse {
+  Items: SheduledAppointment[],
+  FileGuid: string,
+  Count: number
+}
+
+export interface TgSendResponse {
+  ok: boolean
 }
