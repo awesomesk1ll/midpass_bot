@@ -9,7 +9,7 @@ import { log } from "./log";
 import { TgSendResponse } from "./types";
 
 const cookies = fs.existsSync("./cookie.json") && require("../cookie.json");
-
+console.log('cookies', cookies);
 const cookieStrorage = new MemoryCookieStore();
 const jar = cookies
   ? CookieJar.deserializeSync(cookies, cookieStrorage)
@@ -36,7 +36,7 @@ const site = new Site(instance, cookieStrorage, ac);
 
 // 'Привет красафчик это просто тестовое\n *сообщение*'
 export const sendTelegramMessage = async (text : any) => {
-  const res = await axios.get<TgSendResponse>(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${TG_CHAT_ID}&parse_mode=MarkdownV2&text=${encodeURI(text.replace(/([()\-])/g, '\\$1'))}`);
+  const res = await axios.get<TgSendResponse>(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${TG_CHAT_ID}&parse_mode=MarkdownV2&text=${encodeURI(text.replace(/([()!\-])/g, '\\$1'))}`);
   return res.data.ok;
 }
 
@@ -66,7 +66,11 @@ const main = async () => {
     await sendTelegramMessage(`*ВНИМАНИЕ*: Проблема с логином!`);
     throw new Error('Cannot login');
   }
-  log(jar.toJSON());
+  const cookie = jar.toJSON();
+  // log(cookie);
+
+  fs.writeFileSync('./cookie.json', JSON.stringify(cookie));
+  console.log('Saving cookie to file.');
 
   // const schedule = await site.getMonthSchedule();
   // if(schedule.AvailableSlots > 0){
