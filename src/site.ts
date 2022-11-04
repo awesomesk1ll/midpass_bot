@@ -10,6 +10,7 @@ import {
   // SheduledAppointment,
   WaitingAppointments
 } from './types'
+import {sendTelegramMessage} from "./index";
 
 export class Site {
   constructor(
@@ -37,6 +38,7 @@ export class Site {
 
     const sessionCookie = await this.getSessionCookie();
     if (!sessionCookie && idx < 0) {
+      await sendTelegramMessage('*ВНИМАНИЕ:* Ошибка логина!!');
       throw new Error("Login failed");
     }
 
