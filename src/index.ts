@@ -55,19 +55,21 @@ const checkLastRun = () => {
 
 const main = async () => {
   if (process.env.DISABLED) {
-    console.log('DISABLED');
+    log('Disabled for now.')
     return;
   }
+
   checkLastRun();
 
   const logged = await site.login(process.env.EMAIL!, process.env.PASSWORD!);
   console.log('is Logged: ', logged);
   if (!logged) {
-    await sendTelegramMessage(`*ВНИМАНИЕ*: Проблема с логином!`);
-    throw new Error('Cannot login');
+    log('Cannot login, waiting 1 hour.');
+    await sendTelegramMessage(`*ВНИМАНИЕ*: Проблема с логином (попытка через час)!`);
+    await new Promise(resolve => setTimeout(resolve, 1000 * 3600));
+    process.exit(1);
   }
   const cookie = jar.toJSON();
-  // log(cookie);
 
   fs.writeFileSync('./cookie.json', JSON.stringify(cookie));
   console.log('Saving cookie to file.');

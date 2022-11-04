@@ -10,7 +10,6 @@ import {
   // SheduledAppointment,
   WaitingAppointments
 } from './types'
-import { sendTelegramMessage } from './index';
 
 export class Site {
   constructor(
@@ -42,7 +41,6 @@ export class Site {
 
     if (!sessionCookie && retries === 0) {
       console.log("Login failed");
-      await sendTelegramMessage('*ВНИМАНИЕ:* Ошибка логина!!');
       return false;
     }
 
