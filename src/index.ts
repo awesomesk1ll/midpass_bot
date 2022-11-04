@@ -54,6 +54,10 @@ const checkLastRun = () => {
 }
 
 const main = async () => {
+  if (process.env.DISABLED) {
+    console.log('DISABLED');
+    return;
+  }
   checkLastRun();
 
   const logged = await site.login(process.env.EMAIL!, process.env.PASSWORD!);
