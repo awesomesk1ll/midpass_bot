@@ -16,7 +16,9 @@ export class AC {
 
       log(`captcha result: ${text}`);
 
-      if (text.length !== 6) {
+      if (!!text && !(/^[A-z][0-9]{5}$/.test(text))) {
+        const t = await ac.reportIncorrectImageCaptcha();
+        console.log('wrong captcha reported', t);
         throw new Error("Invalid captcha text");
       }
       return text.toLowerCase();

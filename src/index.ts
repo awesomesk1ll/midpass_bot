@@ -36,7 +36,6 @@ if (!AC_TOKEN) {
 const ac = new AC(AC_TOKEN, instance);
 const site = new Site(instance, cookieStrorage, ac);
 
-// 'Привет красафчик это просто тестовое\n *сообщение*'
 export const sendTelegramMessage = async (text : any) => {
   const res = await axios.get<TgSendResponse>(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${TG_CHAT_ID}&parse_mode=MarkdownV2&text=${encodeURI(text.replace(/([()!\-])/g, '\\$1'))}`);
   return res.data.ok;
