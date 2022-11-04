@@ -56,7 +56,12 @@ const checkLastRun = () => {
 const main = async () => {
   checkLastRun();
 
-  await site.login(process.env.EMAIL!, process.env.PASSWORD!);
+  const logged = await site.login(process.env.EMAIL!, process.env.PASSWORD!);
+  console.log('is Logged: ', logged);
+  if (!logged) {
+    await sendTelegramMessage(`*ВНИМАНИЕ*: Проблема с логином!`);
+    throw new Error('Cannot login');
+  }
   log(jar.toJSON());
 
   // const schedule = await site.getMonthSchedule();
@@ -100,6 +105,11 @@ const main = async () => {
 };
 
 main().catch(err => log(err.message));
+
+// test purposes
+// const timer = setInterval(() => {
+//   main().catch(err => log(err.message));
+// }, 1000 * 45 * 2);
 
 const timer = setInterval(() => {
   main().catch(err => log(err.message));

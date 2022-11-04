@@ -10,7 +10,7 @@ import {
   // SheduledAppointment,
   WaitingAppointments
 } from './types'
-import {sendTelegramMessage} from "./index";
+import { sendTelegramMessage } from './index';
 
 export class Site {
   constructor(
@@ -19,7 +19,7 @@ export class Site {
     private ac: AC
   ) {}
 
-  private async tryLogin(username: string, password: string, idx: number): Promise<void> {
+  private async tryLogin(username: string, password: string, idx: number): Promise<any> {
 
     const payload = {
       NeedShowBlockWithServiceProviderAndCountry: "True",
@@ -37,29 +37,38 @@ export class Site {
     );
 
     const sessionCookie = await this.getSessionCookie();
-    if (!sessionCookie && idx < 0) {
+
+    const retries = idx - 1;
+
+    if (!sessionCookie && retries === 0) {
+      console.log("Login failed");
       await sendTelegramMessage('*ВНИМАНИЕ:* Ошибка логина!!');
-      throw new Error("Login failed");
+      return false;
     }
 
     if (!sessionCookie) {
-      log("Login failed, retrying");
-      return await this.tryLogin(username, password, idx - 1);
+      log(`Login failed, retrying - ${idx}`);
+      return await this.tryLogin(username, password, retries);
     }
-    
+
+    return true;
   };
 
   async login(username: string, password: string) {
     let sessionCookie = await this.getSessionCookie();
-    if(sessionCookie){
-      log("Session cookie is already set");
-      return;
-    }
 
     // get initial cookies
-    await this.client.get("/");
+    const check = await this.client.get("/");
 
-    await this.tryLogin(username, password, 3);
+    console.log('check', check?.status);
+    console.log('cookie', sessionCookie);
+
+    if (sessionCookie) {
+      log("Session cookie is already set");
+      return true;
+    }
+
+    return await this.tryLogin(username, password, 3);
   };
 
   private getSessionCookie = (): Promise<Cookie | null> => new Promise((resolve, reject) => {
