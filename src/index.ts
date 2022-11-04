@@ -9,7 +9,7 @@ import { log } from "./log";
 import { TgSendResponse } from "./types";
 
 const cookies = fs.existsSync("./cookie.json") && require("../cookie.json");
-console.log('cookies', cookies);
+console.log('STARTED PROCESS', cookies);
 const cookieStrorage = new MemoryCookieStore();
 const jar = cookies
   ? CookieJar.deserializeSync(cookies, cookieStrorage)
@@ -20,6 +20,8 @@ const instance = wrapper(
     baseURL: "https://q.midpass.ru",
   })
 );
+const LASTRUN_FILENAME = './lastrun';
+
 
 config();
 
@@ -41,8 +43,6 @@ export const sendTelegramMessage = async (text : any) => {
 }
 
 const checkLastRun = () => {
-  const LASTRUN_FILENAME = './lastrun';
-
   if (fs.existsSync(LASTRUN_FILENAME)) {
     const content = fs.readFileSync(LASTRUN_FILENAME, 'utf8');
     if (Date.now() - parseInt(content) < 1000 * 3600 * 4 + 60000 * 2) {
@@ -67,6 +67,8 @@ const main = async () => {
     log('Cannot login, waiting 1 hour.');
     await sendTelegramMessage(`*ВНИМАНИЕ*: Проблема с логином (попытка через час)!`);
     await new Promise(resolve => setTimeout(resolve, 1000 * 3600));
+    log('Clearing lastrun info');
+    fs.writeFileSync(LASTRUN_FILENAME, '0');
     process.exit(1);
   }
   const cookie = jar.toJSON();
