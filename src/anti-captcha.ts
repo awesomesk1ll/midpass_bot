@@ -3,7 +3,7 @@ import { AxiosInstance } from "axios";
 import { log } from "./log";
 
 // @ts-ignore
-ac.settings.comment = "One character and 5 numbers"
+ac.settings.comment = "1 letter and 5 digits"
 
 export class AC {
   constructor(api_key: string, private client: AxiosInstance) {
@@ -18,7 +18,8 @@ export class AC {
 
       if (!!text && !(/^[A-z][0-9]{5}$/.test(text))) {
         const t = await ac.reportIncorrectImageCaptcha();
-        console.log('wrong captcha reported', t);
+        // @ts-ignore
+        console.log('wrong captcha reported', ac.settings.taskId, t);
         throw new Error("Invalid captcha text");
       }
       return text.toLowerCase();
