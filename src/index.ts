@@ -66,9 +66,11 @@ const main = async () => {
     log('Cannot login, waiting 1 hour.');
     await sendTelegramMessage(`*ВНИМАНИЕ*: Проблема с логином (попытка через час)!`);
     await new Promise(resolve => setTimeout(resolve, 1000 * 3600));
-    log('Clearing lastrun info');
     fs.writeFileSync(LASTRUN_FILENAME, '0');
     process.exit(1);
+  } else {
+    log('Setting restart after 4h 90sec');
+    setTimeout(() => process.exit(1), 1000 * 3600 * 4 + 1000 * 90);
   }
   const cookie = jar.toJSON();
 
@@ -123,5 +125,6 @@ main().catch(err => log(err.message));
 // }, 1000 * 45 * 2);
 
 const timer = setInterval(() => {
-  main().catch(err => log(err.message));
-}, 1000 * 60 * 5);
+  log("waiting for restart");
+  // main().catch(err => log(err.message));
+}, 1000 * 60 * 10);
